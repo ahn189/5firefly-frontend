@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -9,7 +10,7 @@ const MyBookings = () => {
     const fetchBookings = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/bookings/my", {
+        const res = await axios.get("${API_BASE_URL}/api/bookings/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBookings(res.data);

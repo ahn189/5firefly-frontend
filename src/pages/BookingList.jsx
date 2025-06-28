@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 // src/pages/BookingList.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -7,7 +8,7 @@ const BookingList = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/bookings")
+      .get("${API_BASE_URL}/api/bookings")
       .then((res) => setBookings(res.data))
       .catch((err) => console.error("Lỗi lấy booking:", err));
   }, []);

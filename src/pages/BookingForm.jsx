@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
@@ -19,7 +20,7 @@ const BookingForm = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/helpers")
+      .get("${API_BASE_URL}/api/helpers")
       .then((res) => setHelpers(res.data))
       .catch((err) => console.error("Lỗi lấy danh sách helpers", err));
   }, []);
@@ -37,7 +38,7 @@ const BookingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/bookings", formData);
+      await axios.post("${API_BASE_URL}/api/bookings", formData);
       toast.success("✅ Đặt lịch thành công! Kiểm tra email để xác nhận.");
       setFormData({
         userName: "",
