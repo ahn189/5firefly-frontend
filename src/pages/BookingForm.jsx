@@ -15,101 +15,96 @@ const BookingForm = () => {
     userEmail: "",
     date: "",
     time: "",
-    helperId: "",
+    helperId: preselectedHelper?._id || "",
   });
 
   useEffect(() => {
     axios
-      .get("${API_BASE_URL}/api/helpers")
+      .get(`${API_BASE_URL}/api/helpers`)
       .then((res) => setHelpers(res.data))
-      .catch((err) => console.error("Lỗi lấy danh sách helpers", err));
+      .catch(() => toast.error("Không thể tải danh sách người giúp việc"));
   }, []);
 
-  useEffect(() => {
-    if (preselectedHelper) {
-      setFormData((prev) => ({ ...prev, helperId: preselectedHelper._id }));
-    }
-  }, [preselectedHelper]);
-
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("${API_BASE_URL}/api/bookings", formData);
-      toast.success("✅ Đặt lịch thành công! Kiểm tra email để xác nhận.");
+      await axios.post(`${API_BASE_URL}/api/bookings`, formData);
+      toast.success("✅ Đặt lịch thành công!");
       setFormData({
         userName: "",
         userPhone: "",
         userEmail: "",
         date: "",
         time: "",
-        helperId: preselectedHelper?._id || "",
+        helperId: "",
       });
     } catch (err) {
-      toast.error("❌ Đặt lịch thất bại!");
+      toast.error("❌ Lỗi khi gửi lịch. Vui lòng thử lại.");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow-md bg-white">
-      <h2 className="text-xl font-bold mb-4 text-blue-800">
-        Đặt lịch với {preselectedHelper?.name || "người giúp việc"}
+    <div className="max-w-xl mx-auto mt-12 bg-white rounded-2xl shadow-lg p-8 transition-all">
+      <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
+        Đặt lịch giúp việc
       </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5">
         <input
           type="text"
           name="userName"
-          placeholder="Tên của bạn"
-          className="w-full border p-2"
-          required
+          placeholder="Họ tên của bạn"
           value={formData.userName}
           onChange={handleChange}
+          required
+          className="border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <input
           type="tel"
           name="userPhone"
           placeholder="Số điện thoại"
-          className="w-full border p-2"
-          required
           value={formData.userPhone}
           onChange={handleChange}
+          required
+          className="border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <input
           type="email"
           name="userEmail"
           placeholder="Email"
-          className="w-full border p-2"
-          required
           value={formData.userEmail}
           onChange={handleChange}
-        />
-        <input
-          type="date"
-          name="date"
-          className="w-full border p-2"
           required
-          value={formData.date}
-          onChange={handleChange}
+          className="border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-        <input
-          type="time"
-          name="time"
-          className="w-full border p-2"
-          required
-          value={formData.time}
-          onChange={handleChange}
-        />
-
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="flex-1 border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            type="time"
+            name="time"
+            value={formData.time}
+            onChange={handleChange}
+            required
+            className="flex-1 border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
         <select
           name="helperId"
-          className="w-full border p-2"
-          required
           value={formData.helperId}
           onChange={handleChange}
+          required
+          className="border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           <option value="">-- Chọn người giúp việc --</option>
           {helpers.map((helper) => (
@@ -118,10 +113,9 @@ const BookingForm = () => {
             </option>
           ))}
         </select>
-
         <button
           type="submit"
-          className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-md transition-all"
         >
           Gửi yêu cầu
         </button>

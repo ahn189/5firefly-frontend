@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "../config";
-// src/pages/BookingList.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -8,44 +7,43 @@ const BookingList = () => {
 
   useEffect(() => {
     axios
-      .get("${API_BASE_URL}/api/bookings")
+      .get(`${API_BASE_URL}/api/bookings`)
       .then((res) => setBookings(res.data))
-      .catch((err) => console.error("Lỗi lấy booking:", err));
+      .catch(() => console.error("Không thể tải lịch đặt"));
   }, []);
 
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold mb-4 text-blue-800">Danh sách lịch đặt</h2>
-
+    <div className="max-w-5xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4 text-blue-800 text-center">
+        Danh sách lịch đặt
+      </h2>
       {bookings.length === 0 ? (
-        <p>Chưa có lịch đặt nào.</p>
+        <p className="text-center text-gray-600">Chưa có lịch đặt nào.</p>
       ) : (
-        <table className="w-full border border-gray-300 text-sm">
-          <thead className="bg-blue-100">
-            <tr>
-              <th className="p-2 border">Tên khách</th>
-              <th className="p-2 border">Email</th>
-              <th className="p-2 border">Điện thoại</th>
-              <th className="p-2 border">Thời gian</th>
-              <th className="p-2 border">Người giúp việc</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((booking) => (
-              <tr key={booking._id} className="border-b">
-                <td className="p-2 border">{booking.userName}</td>
-                <td className="p-2 border">{booking.userEmail}</td>
-                <td className="p-2 border">{booking.userPhone}</td>
-                <td className="p-2 border">
-                  {booking.date} - {booking.time}
-                </td>
-                <td className="p-2 border">
-                  {booking.helperId?.name || "(không rõ)"}
-                </td>
+        <div className="overflow-auto rounded shadow">
+          <table className="w-full text-sm border border-gray-300">
+            <thead className="bg-blue-100 text-blue-800">
+              <tr>
+                <th className="p-2 border">Tên khách</th>
+                <th className="p-2 border">Email</th>
+                <th className="p-2 border">Điện thoại</th>
+                <th className="p-2 border">Thời gian</th>
+                <th className="p-2 border">Người giúp việc</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {bookings.map((b) => (
+                <tr key={b._id} className="even:bg-gray-50">
+                  <td className="p-2 border">{b.userName}</td>
+                  <td className="p-2 border">{b.userEmail}</td>
+                  <td className="p-2 border">{b.userPhone}</td>
+                  <td className="p-2 border">{b.date} - {b.time}</td>
+                  <td className="p-2 border">{b.helperId?.name || "(không rõ)"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

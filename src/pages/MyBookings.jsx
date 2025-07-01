@@ -1,58 +1,39 @@
 import { API_BASE_URL } from "../config";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const MyBookings = () => {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [myBookings, setMyBookings] = useState([]);
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("${API_BASE_URL}/api/bookings/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setBookings(res.data);
-      } catch (error) {
-        alert("❌ Không thể lấy lịch. Bạn đã đăng nhập chưa?");
-      } finally {
-        setLoading(false);
-      }
-    };
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-    fetchBookings();
+    axios
+      .get(`${API_BASE_URL}/api/bookings/my`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setMyBookings(res.data))
+      .catch(() => toast.error("Không thể lấy lịch cá nhân"));
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto p-6 mt-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold text-blue-700 mb-4">Lịch đã đặt của tôi</h2>
-
-      {loading ? (
-        <p>🔄 Đang tải dữ liệu...</p>
-      ) : bookings.length === 0 ? (
-        <p className="text-gray-600">❗Chưa có lịch nào được đặt.</p>
+    <div className="max-w-4xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4 text-blue-800 text-center">
+        Lịch đặt của tôi
+      </h2>
+      {myBookings.length === 0 ? (
+        <p className="text-center text-gray-600">Bạn chưa có lịch đặt nào.</p>
       ) : (
-        <table className="w-full text-sm border border-gray-300">
-          <thead className="bg-blue-100">
-            <tr>
-              <th className="p-2 border">Ngày</th>
-              <th className="p-2 border">Giờ</th>
-              <th className="p-2 border">Người giúp việc</th>
-              <th className="p-2 border">Điện thoại</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((b) => (
-              <tr key={b._id}>
-                <td className="p-2 border">{b.date}</td>
-                <td className="p-2 border">{b.time}</td>
-                <td className="p-2 border">{b.helperId?.name || "?"}</td>
-                <td className="p-2 border">{b.helperId?.phone || "-"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ul className="space-y-3">
+          {myBookings.map((b) => (
+            <li key={b._id} className="p-4 bg-white rounded shadow border">
+              <p><strong>Ngày:</strong> {b.date} lúc {b.time}</p>
+              <p><strong>Người giúp việc:</strong> {b.helperId?.name || "(không rõ)"}</p>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
